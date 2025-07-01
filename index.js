@@ -97,6 +97,49 @@ client.on("message", async (message) => {
   messageQueues.set(number, newQueue);
 });
 
+// Endpoint para remover número do suporte
+app.post("/remover-suporte", async (req, res) => {
+  console.log("📥 Requisição recebida para /remover-suporte");
+  const { numero } = req.body;
+
+  // Validação de entrada
+  if (typeof numero !== "string" || numero.trim() === "") {
+    console.warn("⚠️ Número inválido recebido:", numero);
+    return res.status(400).json({ erro: "Informe número válido" });
+  }
+
+  const chatId = numero.includes("@c.us") ? numero : `${numero}@c.us`;
+  console.log(`🔍 ChatId formatado: ${chatId}`);
+
+  // Verifica se o número está em atendimento
+  if (!inSupport.has(chatId)) {
+    console.warn(`⚠️ ${chatId} não está em atendimento.`);
+    return res
+      .status(404)
+      .json({ erro: "Este número não está em atendimento" });
+  }
+
+  try {
+    // Remove do mapa de atendimento
+    inSupport.delete(chatId);
+    console.log(`🟢 ${chatId} removido do suporte.`);
+
+    // Envia mensagem de confirmação
+    const mensagem =
+      "✅ Atendimento encerrado. Se precisar de mais ajuda, estou por aqui!";
+    const result = await client.sendMessage(chatId, mensagem);
+    console.log(
+      "📨 Mensagem enviada com sucesso:",
+      result?.id?._serialized || result
+    );
+
+    res.json({ status: "Número removido do suporte com sucesso" });
+  } catch (err) {
+    console.error("❌ Erro ao remover do suporte ou enviar mensagem:", err);
+    res.status(500).json({ erro: "Erro ao processar a remoção" });
+  }
+});
+
 // Endpoint para enviar mensagem programaticamente
 app.post("/mensagem", async (req, res) => {
   const { numero, mensagem } = req.body;
@@ -136,6 +179,7 @@ async function sendToFlowise({ text, number, messageObj }) {
 
     try {
       const chat = await messageObj.getChat();
+      console.log("🕵️ Tentando marcar como não lido:", chat.id._serialized);
       await chat.markUnread();
       console.log("✅ Chat marcado como não lido");
     } catch (e) {
@@ -173,9 +217,8 @@ async function sendToFlowise({ text, number, messageObj }) {
       inSupport.set(number, true);
 
       try {
-        const chat = await messageObj.getChat();
-        await chat.markUnread();
-        console.log("✅ Chat marcado como não lido");
+        //Adicionar notificacao de suporte ou alerta
+        console.log("✅ Chat redirecionado para o suporte.");
       } catch (e) {
         console.error("❌ Erro ao marcar como não lido:", e);
       }
