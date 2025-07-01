@@ -60,8 +60,9 @@ Crie um arquivo chamado .env na raiz do projeto com o seguinte conteúdo:
 ```bash
 FLOWISE_URL=http://localhost:3000/api/v1/prediction/SEU_FLOW_ID_AQUI
 FLOWISE_TOKEN=SEU_TOKEN_DO_FLOWISE_AQUI
-Você pode usar o arquivo .env.example como modelo.
 ```
+
+Você pode usar o arquivo .env.example como modelo.
 
 ### Exemplo de fluxo no Flowise
 
