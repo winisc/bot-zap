@@ -75,7 +75,7 @@ Você pode usar o arquivo .env.example como modelo.
 ### 6. Inicie o bot
 
 ```bash
-   node index.js
+   node src/index.js
    Escaneie o QR Code exibido no terminal com o WhatsApp que será usado como bot.
 ```
 
@@ -83,11 +83,25 @@ Você pode usar o arquivo .env.example como modelo.
 
 ```bash
 
-├── index.js # Código principal do bot
-├── package.json # Dependências
-├── .gitignore # Arquivos ignorados pelo Git
-├── .wwebjs_auth/ # Pasta de sessão gerada automaticamente
-└── README.md # Documentação
+bot-zap/
+├── src/
+│   ├── bot/
+│   │   ├── client.js             # Inicializa e configura o WhatsApp
+│   │   ├── handlers.js           # Lógica de resposta e fila
+│   │   ├── flowise.js            # Comunicação com Flowise (Gemini)
+│   │   └── support.js            # Controle de atendimento humano
+│   │
+│   ├── routes/
+│   │   ├── mensagem.js           # Endpoint para envio manual de mensagens
+│   │   └── remover-suporte.js   # Endpoint para encerrar atendimento
+│   │
+│   ├── app.js                    # Configurações do Express
+│   └── index.js                  # Inicialização principal
+│
+├── .env                          # Configurações sensíveis (URL e token)
+├── package.json                  # Dependências do projeto
+├── .gitignore                    # Arquivos/pastas ignoradas pelo Git
+└── README.md                     # Documentação do projeto
 ```
 
 🧠 Funcionalidades
